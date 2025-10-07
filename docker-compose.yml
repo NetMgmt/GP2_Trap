@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  manager:
+    build: 
+      context: .
+      dockerfile: ./manager/dockerfile
+    container_name: gp2-snmp-manager
+    hostname: manager
+    networks:
+      snmp_net:
+        ipv4_address: 10.0.123.2
+    tty: true
+    stdin_open: true
+    #command: ["/bin/bash", "-c", "/gpx/snmp-manager-setup.sh && bash"]
+
+  agent:
+    build: 
+      context: .
+      dockerfile: ./agent/dockerfile
+    container_name: gp2-snmp-agent
+    hostname: agent
+    networks:
+      snmp_net:
+        ipv4_address: 10.0.123.3
+    tty: true
+    stdin_open: true
+    #command: ["/bin/bash", "-c", "/gpx/snmp-agent-setup.sh && bash"]
+
+networks:
+  snmp_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.123.0/24

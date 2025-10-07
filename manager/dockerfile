@@ -1,0 +1,34 @@
+# Dockerfile
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN yes | unminimize
+
+# Instalacion de dependencias comunes
+RUN apt-get update && apt-get install -y \
+    man-db manpages manpages-dev manpages-posix less \
+    unzip \
+    snmp \
+    snmpd \
+    snmptrapd \
+    iputils-ping \
+    net-tools \
+    iproute2 \
+    vim \
+    nano \
+    && rm -rf /var/lib/apt/lists/*
+
+# Creación del directorio de trabajo
+WORKDIR /gpx
+
+# Copia de los archivos del proyecto
+COPY gp2.zip /gpx/gp2.zip
+COPY ./manager/snmp-manager-setup.sh /gpx/snmp-manager-setup.sh
+
+# Otorga los permisos de ejecución de los scripts
+RUN chmod +x /gpx/snmp-manager-setup.sh
+RUN /gpx/snmp-manager-setup.sh
+
+# Deja el contenedor en modo interactivo
+CMD ["/bin/bash"]
